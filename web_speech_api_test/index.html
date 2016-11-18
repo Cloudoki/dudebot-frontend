@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  <title>Speech to text</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+  <link href="styles/app.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <main class="container">
+    <h1 class="header center red-text">Speech to text</h1>
+    <div class="row center">
+      <i id="icon" class="large material-icons">hearing</i>
+      Partial: <div id="partials"></div>
+      Finals: <div id="finals"></div>
+      <div class="fixed-action-btn bottom">
+        <button id="button-play" class="waves-effect waves-light btn-large red" data-muted="false">Start Listen</button>
+      </div>
+    </div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>

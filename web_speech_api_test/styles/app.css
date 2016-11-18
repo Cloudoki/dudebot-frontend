@@ -1,0 +1,25 @@
+body{
+  margin:0;
+  padding:0;
+}
+
+canvas{
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:-1;
+}
+
+.bottom {
+  bottom: 45px;
+  right: 24px;
+}
+
+.bottom2 {
+  bottom: 45px;
+  right: 154px;
+}
+
+.main {
+  z-index: 1;
+}
