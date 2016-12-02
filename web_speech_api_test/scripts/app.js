@@ -1,3 +1,4 @@
+/* global webkitSpeechRecognition:true */
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition || null;
 
 // create web audio api context
@@ -6,13 +7,14 @@ var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 // ------------------------ WEB SPEECH API --------------------------
 
 function startSpeechRecognier(auto){
-  var triggers = ['hey dude', 'hey mate'];
+  var triggers = ['hey dude', 'hey mate', 'ok dude', 'okay dude'];
   var commands = {
     "insult": ['insult']
   };
   var state = {
     "triggered": false,
-    "listening": false
+    "listening": false,
+    "waiting": false
   };
   var recognizer = new SpeechRecognition();
 
@@ -77,9 +79,21 @@ function startSpeechRecognier(auto){
             var commandDetected = commands[key].some(function(word) {
               return finalText.join(', ').toLowerCase().indexOf(word.toLowerCase()) !== -1;
             });
-            if(commandDetected) callCommand(key);
+            if(commandDetected) {
+              callCommand(key);
+
+              state.triggered = false;
+              state.waiting = false;
+            }
           });
-          state.triggered = false;
+
+          if (!state.waiting)
+            setTimeout(function(){
+              state.triggered = false;
+              state.waiting = false;
+            },4000);
+
+          state.waiting = true;
         } else {
           state.triggered = triggers.some(function(word) {
             return finalText.join(', ').toLowerCase().indexOf(word.toLowerCase()) !== -1;
@@ -151,24 +165,53 @@ function getUserVoice() {
       // uncomment so that audio will come from the speakers
       analyser.connect(audioCtx.destination);
       gainNode.gain.value = 1;
-      // animateVoice();
+      animateVoice();
     })
     .catch(function(err) { console.log(err.name + ": " + err.message); }); // always check for errors at the end.
   }
 }
 
 function animateVoice() {
+  var canvas = document.getElementById("canvas");
+  var WIDTH = canvas.width;
+  var HEIGHT = canvas.height;
+  var ctx = canvas.getContext("2d");
+  var centerX = WIDTH / 2.0;
+  var centerY = HEIGHT / 2.0;
+
   var bufferLength = analyser.frequencyBinCount;
   var dataArray = new Uint8Array(bufferLength);
   analyser.getByteTimeDomainData(dataArray);
+  ctx.fillStyle = 'rgb(0, 0, 0)';
+  ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgb(2, 254, 255)';
+
+  ctx.beginPath();
+
+  var x = 0, y = 0, radius = 50;
 
   for (var i = 0; i < bufferLength; i++) {
-		var v = dataArray[i] / 128.0;
+      var rads = Math.PI * 2 / bufferLength;
+      var v = dataArray[i] / 10.0;
 
-    // animate something using v
-	}
+      var vx = centerX + Math.cos(rads * i) * (radius + v);
+		  var vy = centerY + Math.sin(rads * i) * (radius + v);
 
-  console.log(dataArray[0], bufferLength);
+      if (i === 0) {
+          x = vx, y = vy;
+          ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(vx, vy);
+      }
+
+      if(i === bufferLength -1 ) {
+        ctx.lineTo(x, y);
+      }
+  }
+
+  ctx.stroke();
 
   window.requestAnimationFrame(animateVoice);
 }

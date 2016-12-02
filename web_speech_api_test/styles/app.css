@@ -4,9 +4,11 @@ body{
 }
 
 canvas{
-  position:absolute;
-  left:0;
-  top:0;
+  width: 150px;
+  height: 150px;
+  -webkit-border-radius: 75px;
+  -moz-border-radius: 75px;
+  border-radius: 75px;
   z-index:-1;
 }
 
